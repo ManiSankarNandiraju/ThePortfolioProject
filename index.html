@@ -108,9 +108,9 @@
       function startGame() {
         gameLoop();
       }
-
-      // Call startGame after all images have loaded
-      window.addEventListener("load", () => {
+      
+      // Call startGame after the document has loaded
+      window.addEventListener("DOMContentLoaded", () => {
         startGame();
       });
     </script>
