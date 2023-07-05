@@ -1,39 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
 <html>
-<head>
-	
-    	<title>ManiSankar</title>
-</head>
-<body>
-	<header>
-		<h1>Profile</h1>
-		<nav>
-			<ul>
-				<li><a href="#">Home</a></li>
-				<li><a href="#">About</a></li>
-				<li><a href="#">Contact</a></li>
-			</ul>
-		</nav>
-	</header>
-	<script src="Card.js"></script>
-	<script src="AllCard.js"></script>
-	<style>
-	body {
-		background-image: url("wallpaper.jpg");
-		background-repeat: no-repeat;
-		background-size: cover;
-	}
-	</style>
+  <head>
+    <title>2D Plane Game</title>
+    <style>
+      canvas {
+        background-color: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
 
-	<main>
-		<h2>Welcome</h2>
-		<p>Here is My Portfolio</p>
-		<a href="#">Get started</a>
-	</main>
+    <script>
+      // Set up the game canvas
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
 
-	<footer>
-		<p>Copyright © 2023 ManiSankarNandiraju</p>
-	</footer>
-</body>
+      // Load character sprites for different frames
+      const characterFrames = [
+        "frame1.png",
+        "frame2.png",
+        "frame3.png",
+        "frame4.png"
+      ];
+
+      // Set up the character's initial position
+      let characterX = 100;
+      let characterY = 100;
+
+      // Set up the character's movement speed
+      const characterSpeed = 0.10;
+
+      // Set up animation variables
+      let currentFrame = 0;
+      let animationTimer = 0;
+      const animationSpeed = 0.2; // Time (in seconds) between each frame
+      let isMoving = false;
+
+      // Load character frames
+      const characterFramesImages = [];
+      let framesLoadedCount = 0;
+
+      for (let i = 0; i < characterFrames.length; i++) {
+        const image = new Image();
+        image.src = characterFrames[i];
+        image.onload = () => {
+          framesLoadedCount++;
+          if (framesLoadedCount === characterFrames.length) {
+            startGame();
+          }
+        };
+        characterFramesImages.push(image);
+      }
+
+      // Game loop
+      function gameLoop() {
+        // Handle input for character movement
+        window.addEventListener("keydown", (event) => {
+          switch (event.key) {
+            case "ArrowUp":
+              characterY -= characterSpeed;
+              isMoving = true;
+              break;
+            case "ArrowDown":
+              characterY += characterSpeed;
+              isMoving = true;
+              break;
+            case "ArrowLeft":
+              characterX -= characterSpeed;
+              isMoving = true;
+              break;
+            case "ArrowRight":
+              characterX += characterSpeed;
+              isMoving = true;
+              break;
+            default:
+              isMoving = false;
+              break;
+          }
+        });
+
+        // Update the animation if character is moving
+        if (isMoving) {
+          animationTimer += 1 / 60; // Assuming 60 FPS
+
+          if (animationTimer >= animationSpeed) {
+            currentFrame = (currentFrame + 1) % characterFrames.length;
+            animationTimer = 0;
+          }
+        }
+
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the character
+        ctx.drawImage(
+          characterFramesImages[currentFrame],
+          characterX,
+          characterY
+        );
+
+        // Call the game loop again
+        requestAnimationFrame(gameLoop);
+      }
+
+      // Start the game loop
+      function startGame() {
+        gameLoop();
+      }
+
+      // Call startGame after all images have loaded
+      window.addEventListener("load", () => {
+        startGame();
+      });
+    </script>
+  </body>
 </html>
