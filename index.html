@@ -217,6 +217,11 @@
         // Request the first animation frame
         requestAnimationFrame(gameLoop);
       }
+      // Reset character position when leaving the page
+      window.onbeforeunload = function() {
+        characterX = 100;
+        characterY = 100;
+      };
     </script>
   </body>
 </html>
