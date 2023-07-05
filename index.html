@@ -62,7 +62,7 @@
         isOpen: false
       };
 
-      // Check if the character is halfway into the profile block
+      // Check if the character is inside the profile block
       function checkProfileInteraction() {
         const characterCenterX = characterX + characterFramesImages[currentFrame].width / 2;
         const characterCenterY = characterY + characterFramesImages[currentFrame].height / 2;
@@ -204,6 +204,9 @@
         // Draw the block
         ctx.fillStyle = "#ff0000";
         ctx.fillRect(profileBlock.x, profileBlock.y, profileBlock.width, profileBlock.height);
+
+        // Check if the character is inside the profile block
+        checkProfileInteraction();
 
         // Request the next animation frame
         requestAnimationFrame(gameLoop);
