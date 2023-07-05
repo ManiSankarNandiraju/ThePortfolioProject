@@ -172,13 +172,44 @@
         // Request the next animation frame
         requestAnimationFrame(gameLoop);
       }
+      // Set up the profile block
+      const profileBlock = {
+        x: 300,
+        y: 200,
+        width: 200,
+        height: 200,
+        isOpen: false
+      };
 
+      // Check if the character is halfway into the profile block
+      function checkProfileInteraction() {
+        const characterCenterX = characterX + characterFramesImages[currentFrame].width / 2;
+        const characterCenterY = characterY + characterFramesImages[currentFrame].height / 2;
+
+        if (
+          characterCenterX > profileBlock.x &&
+          characterCenterX < profileBlock.x + profileBlock.width &&
+          characterCenterY > profileBlock.y &&
+          characterCenterY < profileBlock.y + profileBlock.height
+        ) {
+          openProfilePage();
+        }
+      }
+
+      // Open the profile page
+      function openProfilePage() {
+        if (!profileBlock.isOpen) {
+          profileBlock.isOpen = true;
+          window.location.href = "profile.html";
+        }
+      }
       // Start the game
       function startGame() {
         // Request the first animation frame
         requestAnimationFrame(gameLoop);
       }
     </script>
+    <script src="profile_block.js"></script>
    
   </body>
 </html>
