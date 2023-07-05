@@ -60,30 +60,26 @@
 
       let touchStartX = 0;
       let touchStartY = 0;
-      let touchMoved = false;
 
       function handleTouchStart(event) {
         event.preventDefault();
         const touch = event.touches[0];
         touchStartX = touch.clientX;
         touchStartY = touch.clientY;
-        touchMoved = false;
+        isMoving = true;
       }
 
       function handleTouchMove(event) {
         event.preventDefault();
-        touchMoved = true;
+        const touch = event.touches[0];
+        const touchEndX = touch.clientX;
+        const touchEndY = touch.clientY;
+        handleTouchMovement(touchStartX, touchStartY, touchEndX, touchEndY);
       }
 
       function handleTouchEnd(event) {
         event.preventDefault();
-        if (touchMoved) {
-          const touch = event.changedTouches[0];
-          const touchEndX = touch.clientX;
-          const touchEndY = touch.clientY;
-          handleTouchMovement(touchStartX, touchStartY, touchEndX, touchEndY);
-        }
-        touchMoved = false;
+        isMoving = false;
       }
 
       function handleTouchMovement(startX, startY, endX, endY) {
@@ -95,21 +91,17 @@
           if (deltaX > threshold) {
             // Swipe right
             characterX += characterSpeed;
-            isMoving = true;
           } else if (deltaX < -threshold) {
             // Swipe left
             characterX -= characterSpeed;
-            isMoving = true;
           }
         } else {
           if (deltaY > threshold) {
             // Swipe down
             characterY += characterSpeed;
-            isMoving = true;
           } else if (deltaY < -threshold) {
             // Swipe up
             characterY -= characterSpeed;
-            isMoving = true;
           }
         }
       }
