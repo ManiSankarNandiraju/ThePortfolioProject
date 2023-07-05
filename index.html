@@ -29,13 +29,13 @@
       let characterY = 100;
 
       // Set up the character's movement speed
-      const characterSpeed = 0.10;
+      const characterSpeed = 2; // Adjust the speed as needed
 
       // Set up animation variables
       let currentFrame = 0;
+      let isMoving = false;
       let animationTimer = 0;
       const animationSpeed = 0.2; // Time (in seconds) between each frame
-      let isMoving = false;
 
       // Load character frames
       const characterFramesImages = [];
@@ -53,33 +53,43 @@
         characterFramesImages.push(image);
       }
 
+      // Handle keydown event for character movement
+      window.addEventListener("keydown", (event) => {
+        switch (event.key) {
+          case "ArrowUp":
+            characterY -= characterSpeed;
+            isMoving = true;
+            break;
+          case "ArrowDown":
+            characterY += characterSpeed;
+            isMoving = true;
+            break;
+          case "ArrowLeft":
+            characterX -= characterSpeed;
+            isMoving = true;
+            break;
+          case "ArrowRight":
+            characterX += characterSpeed;
+            isMoving = true;
+            break;
+        }
+      });
+
+      // Handle keyup event to stop character movement and animation
+      window.addEventListener("keyup", (event) => {
+        switch (event.key) {
+          case "ArrowUp":
+          case "ArrowDown":
+          case "ArrowLeft":
+          case "ArrowRight":
+            isMoving = false;
+            animationTimer = 0;
+            break;
+        }
+      });
+
       // Game loop
       function gameLoop() {
-        // Handle input for character movement
-        window.addEventListener("keydown", (event) => {
-          switch (event.key) {
-            case "ArrowUp":
-              characterY -= characterSpeed;
-              isMoving = true;
-              break;
-            case "ArrowDown":
-              characterY += characterSpeed;
-              isMoving = true;
-              break;
-            case "ArrowLeft":
-              characterX -= characterSpeed;
-              isMoving = true;
-              break;
-            case "ArrowRight":
-              characterX += characterSpeed;
-              isMoving = true;
-              break;
-            default:
-              isMoving = false;
-              break;
-          }
-        });
-
         // Update the animation if character is moving
         if (isMoving) {
           animationTimer += 1 / 60; // Assuming 60 FPS
@@ -108,11 +118,7 @@
       function startGame() {
         gameLoop();
       }
-      
+
       // Call startGame after the document has loaded
       window.addEventListener("DOMContentLoaded", () => {
         startGame();
-      });
-    </script>
-  </body>
-</html>
