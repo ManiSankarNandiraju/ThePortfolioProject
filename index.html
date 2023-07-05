@@ -52,6 +52,7 @@
         };
         characterFramesImages.push(image);
       }
+
       // Set up the profile block
       const profileBlock = {
         x: 300,
@@ -199,20 +200,20 @@
           characterX,
           characterY
         );
-         // Draw the block
+
+        // Draw the block
         ctx.fillStyle = "#ff0000";
-        ctx.fillRect(block.x, block.y, block.width, block.height);
+        ctx.fillRect(profileBlock.x, profileBlock.y, profileBlock.width, profileBlock.height);
 
         // Request the next animation frame
         requestAnimationFrame(gameLoop);
       }
+
       // Start the game
       function startGame() {
         // Request the first animation frame
         requestAnimationFrame(gameLoop);
       }
     </script>
-    <script src="profile_block.js"></script>
-   
   </body>
 </html>
