@@ -55,24 +55,35 @@
 
       // Handle touch events for character movement
       canvas.addEventListener("touchstart", handleTouchStart);
+      canvas.addEventListener("touchmove", handleTouchMove);
       canvas.addEventListener("touchend", handleTouchEnd);
 
       let touchStartX = 0;
       let touchStartY = 0;
+      let touchMoved = false;
 
       function handleTouchStart(event) {
         event.preventDefault();
         const touch = event.touches[0];
         touchStartX = touch.clientX;
         touchStartY = touch.clientY;
+        touchMoved = false;
+      }
+
+      function handleTouchMove(event) {
+        event.preventDefault();
+        touchMoved = true;
       }
 
       function handleTouchEnd(event) {
         event.preventDefault();
-        const touch = event.changedTouches[0];
-        const touchEndX = touch.clientX;
-        const touchEndY = touch.clientY;
-        handleTouchMovement(touchStartX, touchStartY, touchEndX, touchEndY);
+        if (touchMoved) {
+          const touch = event.changedTouches[0];
+          const touchEndX = touch.clientX;
+          const touchEndY = touch.clientY;
+          handleTouchMovement(touchStartX, touchStartY, touchEndX, touchEndY);
+        }
+        touchMoved = false;
       }
 
       function handleTouchMovement(startX, startY, endX, endY) {
