@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pygame in HTML</title>
+    <script type="module">
+        // Load Pyodide
+        importScripts('https://pyodide-cdn2.iodide.io/v0.16.1/full/pyodide.js');
+
+        async function runPygame() {
+            // Wait for Pyodide to finish loading
+            await languagePluginLoader;
+
+            // Import necessary Pygame modules
+            const pygame = await loadPyodideModule('pygame');
+
+            // Pygame code
+            pygame.init();
+
+            const width = 800;
+            const height = 600;
+            const screen = pygame.display.set_mode([width, height]);
+            pygame.display.set_caption("Pixel Character Walk");
+
+            const character_image = pygame.image.load("character.png");
+            const character_rect = character_image.get_rect();
+            let character_speed = 5;
+
+            const clock = pygame.time.Clock();
+
+            function gameLoop() {
+                for (const event of pygame.event.get()) {
+                    if (event.type === pygame.QUIT) {
+                        pygame.quit();
+                        return;
+                    }
+                }
+
+                const keys = pygame.key.get_pressed();
+                if (keys[pygame.K_LEFT]) {
+                    character_rect.x -= character_speed;
+                }
+                if (keys[pygame.K_RIGHT]) {
+                    character_rect.x += character_speed;
+                }
+                if (keys[pygame.K_UP]) {
+                    character_rect.y -= character_speed;
+                }
+                if (keys[pygame.K_DOWN]) {
+                    character_rect.y += character_speed;
+                }
+
+                // Clear the screen
+                screen.fill([255, 255, 255]);
+
+                // Draw the character
+                screen.blit(character_image, character_rect);
+
+                // Update the display
+                pygame.display.flip();
+
+                // Cap the frame rate
+                clock.tick(30);
+
+                // Request the next animation frame
+                requestAnimationFrame(gameLoop);
+            }
+
+            // Start the game loop
+            gameLoop();
+        }
+
+        // Run the Pygame code when the document is ready
+        document.addEventListener('DOMContentLoaded', runPygame);
+    </script>
+</head>
+<body>
+    <h1>Pygame in HTML</h1>
+    <!-- Add any additional HTML content here -->
+</body>
+</html>
