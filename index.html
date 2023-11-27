@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mani Sankar Nandiraju</title>
+    <style>
+      canvas {
+        background-color: #5093a1;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gameCanvas" width="1580" height="700"></canvas>
+
+    <script>
+      // Set up the game canvas
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+
+      // Load character sprites for different directions
+      const characterFrames = {
+        up: ["up1.png", "up2.png", "up3.png"],
+        down: ["down1.png", "down2.png", "down3.png"],
+        left: ["left1.png", "left2.png", "left3.png"],
+        right: ["right1.png", "right2.png", "right3.png"]
+      };
+
+      // Set up the character's initial position
+      let characterX = 100;
+      let characterY = 100;
+
+      // Set up the character's movement speed
+      const characterSpeed = 2; // Adjust the speed as needed
+
+      // Set up animation variables
+      let currentDirection = "down";
+      let currentFrame = 0;
+      let isMoving = false;
+      let animationTimer = 0;
+      const animationSpeed = 0.2; // Time (in seconds) between each frame
+
+      // Load character frames
+      const characterFramesImages = {};
+      let framesLoadedCount = 0;
+
+      for (const direction in characterFrames) {
+        characterFramesImages[direction] = [];
+        for (let i = 0; i < characterFrames[direction].length; i++) {
+          const image = new Image();
+          image.src = characterFrames[direction][i];
+          image.onload = () => {
+            framesLoadedCount++;
+            if (framesLoadedCount === getTotalFrameCount()) {
+              startGame();
+            }
+          };
+          characterFramesImages[direction].push(image);
+        }
+      }
+
+      function getTotalFrameCount() {
+        let totalCount = 0;
+        for (const direction in characterFrames) {
+          totalCount += characterFrames[direction].length;
+        }
+        return totalCount;
+      }
+
+      // Set up the profile block
+      const profileBlock = {
+        x: 300,
+        y: 200,
+        width: 200,
+        height: 200,
+        isOpen: false
+      };
+
+      // Check if the character is inside the profile block
+      function checkProfileInteraction() {
+        const characterCenterX = characterX + characterFramesImages[currentDirection][currentFrame].width / 2;
+        const characterCenterY = characterY + characterFramesImages[currentDirection][currentFrame].height / 2;
+
+        if (
+          characterCenterX > profileBlock.x &&
+          characterCenterX < profileBlock.x + profileBlock.width &&
+          characterCenterY > profileBlock.y &&
+          characterCenterY < profileBlock.y + profileBlock.height
+        ) {
+          openProfilePage();
+        }
+      }
+
+      // Open the profile page
+      function openProfilePage() {
+        if (!profileBlock.isOpen) {
+          profileBlock.isOpen = true;
+          window.location.href = "https://nandirajumanisankar.netlify.app";
+        }
+      }
+
+      // Handle touch events for character movement
+      canvas.addEventListener("touchstart", handleTouchStart);
+      canvas.addEventListener("touchmove", handleTouchMove);
+      canvas.addEventListener("touchend", handleTouchEnd);
+
+      let touchStartX = 0;
+      let touchStartY = 0;
+
+      function handleTouchStart(event) {
+        event.preventDefault();
+        const touch = event.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        isMoving = true;
+      }
+
+      function handleTouchMove(event) {
+        event.preventDefault();
+        const touch = event.touches[0];
+        const touchEndX = touch.clientX;
+        const touchEndY = touch.clientY;
+        handleTouchMovement(touchStartX, touchStartY, touchEndX, touchEndY);
+      }
+
+      function handleTouchEnd(event) {
+        event.preventDefault();
+        isMoving = false;
+      }
+
+      function handleTouchMovement(startX, startY, endX, endY) {
+        const deltaX = endX - startX;
+        const deltaY = endY - startY;
+        const threshold = 50; // Adjust the threshold as needed
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+          if (deltaX > threshold) {
+            // Swipe right
+            characterX += characterSpeed;
+          } else if (deltaX < -threshold) {
+            // Swipe left
+            characterX -= characterSpeed;
+          }
+        } else {
+          if (deltaY > threshold) {
+            // Swipe down
+            characterY += characterSpeed;
+          } else if (deltaY < -threshold) {
+            // Swipe up
+            characterY -= characterSpeed;
+          }
+        }
+      }
+
+      // Handle keyboard events for character movement
+      document.addEventListener("keydown", handleKeyDown);
+      document.addEventListener("keyup", handleKeyUp);
+
+      const keyMap = {
+        ArrowUp: "up",
+        ArrowDown: "down",
+        ArrowLeft: "left",
+        ArrowRight: "right"
+      };
+
+      const keyState = {
+        up: false,
+        down: false,
+        left: false,
+        right: false
+      };
+
+      function handleKeyDown(event) {
+        const key = keyMap[event.key];
+        if (key) {
+          event.preventDefault();
+          keyState[key] = true;
+          isMoving = true;
+          updateCharacterDirection();
+        }
+      }
+
+      function handleKeyUp(event) {
+        const key = keyMap[event.key];
+        if (key) {
+          event.preventDefault();
+          keyState[key] = false;
+          isMoving = false;
+          updateCharacterDirection();
+        }
+      }
+
+      function updateCharacterDirection() {
+        // Update character direction based on key states
+        if (keyState.up) {
+          currentDirection = "up";
+        } else if (keyState.down) {
+          currentDirection = "down";
+        } else if (keyState.left) {
+          currentDirection = "left";
+        } else if (keyState.right) {
+          currentDirection = "right";
+        }
+      }
+
+		// Game loop
+		function gameLoop() {
+		  // Update character position based on input
+		  if (isMoving) {
+			animationTimer += 1 / 60; // Assuming 60 FPS
+			if (animationTimer >= animationSpeed) {
+			  currentFrame = (currentFrame + 1) % characterFramesImages[currentDirection].length;
+			  animationTimer = 0;
+			}
+
+			// Update character position
+			if (keyState.up) {
+			  characterY -= characterSpeed;
+			} else if (keyState.down) {
+			  characterY += characterSpeed;
+			}
+			if (keyState.left) {
+			  characterX -= characterSpeed;
+			} else if (keyState.right) {
+			  characterX += characterSpeed;
+			}
+		  }
+
+		  // Clear the canvas
+		  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		  // Draw the character
+		  ctx.drawImage(
+			characterFramesImages[currentDirection][currentFrame],
+			characterX,
+			characterY
+		  );
+
+		  // Draw the block
+		  ctx.fillStyle = "#ff0000";
+		  ctx.fillRect(profileBlock.x, profileBlock.y, profileBlock.width, profileBlock.height);
+
+		  // Check if the character is inside the profile block
+		  checkProfileInteraction();
+
+		  // Request the next animation frame
+		  requestAnimationFrame(gameLoop);
+		}
+
+
+      // Start the game
+      function startGame() {
+        // Set the initial direction and frame
+        currentDirection = "down";
+        currentFrame = 0;
+
+        // Request the first animation frame
+        requestAnimationFrame(gameLoop);
+      }
+
+    </script>
+  </body>
+</html>
